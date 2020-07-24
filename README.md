@@ -1,3 +1,51 @@
+# Docker Setup
+NOTE: Currently running this depends upon `docker` and local `postgres` instance
+(using `spring.datasource.url=jdbc:postgresql://host.docker.internal:5432/piper`)
+
+WIP - `docker-composing` this actively
+
+## Build image
+Pre-reqs: Install `mvn`, `jdk11` 
+```
+$ mvn clean install 
+$ docker build -t piper .
+```
+
+## Hello World Example:
+
+Create an empty directory: 
+
+```
+mkdir pipelines
+cd pipelines
+```
+
+Create a simple pipeline file --  `hello.yaml` -- and paste the following to it: 
+
+```
+label: Hello World
+    
+inputs:
+  - name: name
+    label: Your Name
+    type: core/var
+    required: true
+    
+tasks:      
+  - label: Print Hello Message
+    type: io/print
+    text: "Hello ${name}!"
+```
+
+```
+docker run --name=piper --rm -it -e piper.worker.enabled=true -e piper.coordinator.enabled=true -e piper.worker.subscriptions.tasks=1 -e piper.pipeline-repository.filesystem.enabled=true -e piper.pipeline-repository.filesystem.location-pattern=/pipelines/**/*.yaml -v $PWD:/pipelines -p 8080:8080 piper
+```
+
+```
+curl -s -X POST -H Content-Type:application/json -d '{"pipelineId":"hello","inputs":{"name":"Joe Jones"}}' http://localhost:8080/jobs
+```
+
+
 # Introduction
 
 Piper is an open-source, distributed workflow engine built on Spring Boot, designed to be dead simple. 
@@ -844,42 +892,7 @@ spring.datasource.password= # Login password of the database (for jdbc)
 ```
 
 # Docker
-
 [creactiviti/piper](https://hub.docker.com/r/creactiviti/piper)
-
-Hello World in Docker:
-
-Create an empty directory: 
-
-```
-mkdir pipelines
-cd pipelines
-```
-
-Create a simple pipeline file --  `hello.yaml` -- and paste the following to it: 
-
-```
-label: Hello World
-    
-inputs:
-  - name: name
-    label: Your Name
-    type: core/var
-    required: true
-    
-tasks:      
-  - label: Print Hello Message
-    type: io/print
-    text: "Hello ${name}!"
-```
-
-```
-docker run --name=piper --rm -it -e piper.worker.enabled=true -e piper.coordinator.enabled=true -e piper.worker.subscriptions.tasks=1 -e piper.pipeline-repository.filesystem.enabled=true -e piper.pipeline-repository.filesystem.location-pattern=/pipelines/**/*.yaml -v $PWD:/pipelines -p 8080:8080 creactiviti/piper
-```
-
-```
-curl -s -X POST -H Content-Type:application/json -d '{"pipelineId":"hello","inputs":{"name":"Joe Jones"}}' http://localhost:8080/jobs
-```
 
 # License
 Piper is released under version 2.0 of the [Apache License](LICENSE). 
