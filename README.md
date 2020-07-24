@@ -1,14 +1,8 @@
-# Docker Setup
-NOTE: Currently running this depends upon `docker` and local `postgres` instance
-(using `spring.datasource.url=jdbc:postgresql://host.docker.internal:5432/piper`)
+# Setup
 
-WIP - `docker-composing` this actively
-
-## Build image
 Pre-reqs: Install `mvn`, `jdk11` 
 ```
 $ mvn clean install 
-$ docker build -t piper .
 ```
 
 ## Hello World Example:
@@ -30,12 +24,24 @@ tasks:
     text: "Hello ${name}!"
 ```
 
+## Run via docker compose (recommended)
 ```
-docker run --name=piper --rm -it -e piper.worker.enabled=true -e piper.coordinator.enabled=true -e piper.worker.subscriptions.tasks=1 -e piper.pipeline-repository.filesystem.enabled=true -e piper.pipeline-repository.filesystem.location-pattern=/pipelines/**/*.yaml -v $PWD:/pipelines -p 8080:8080 piper
+$ docker-compose up -d
 ```
 
 ```
-curl -s -X POST -H Content-Type:application/json -d '{"pipelineId":"hello","inputs":{"name":"Joe Jones"}}' http://localhost:8080/jobs
+$ docker-compose down
+```
+
+## docker run CLI
+```
+$ docker build -t piper .
+$ docker run --name=piper --rm -it -e piper.worker.enabled=true -e piper.coordinator.enabled=true -e piper.worker.subscriptions.tasks=1 -e piper.pipeline-repository.filesystem.enabled=true -e piper.pipeline-repository.filesystem.location-pattern=/pipelines/**/*.yaml -v $PWD:/pipelines -p 8080:8080 piper
+```
+
+## Sample requests
+```
+$ curl -s -X POST -H Content-Type:application/json -d '{"pipelineId":"hello","inputs":{"name":"Joe Jones"}}' http://localhost:8080/jobs
 ```
 
 
