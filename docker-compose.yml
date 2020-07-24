@@ -1,0 +1,32 @@
+version: "3.5"
+
+services:
+  piper:
+    container_name: piper
+    environment:
+      piper.worker.enabled: "true"
+      piper.coordinator.enabled: "true"
+      piper.worker.subscriptions.tasks: 1
+      piper.pipeline-repository.filesystem.enabled: "true"
+      piper.pipeline-repository.filesystem.location-pattern: /pipelines/**/*.yaml
+      spring.datasource.url: jdbc:postgresql://postgres:5432/piper
+      spring.datasource.initialization-mode: always
+    volumes:
+      - '$PWD:/pipelines'
+    ports:
+      - '8080:8080'
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    depends_on:
+      - postgres
+
+  postgres:
+    image: library/postgres:11.6
+    container_name: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: piper
+      POSTGRES_PASSWORD: piper
+      POSTGRES_DB: piper
