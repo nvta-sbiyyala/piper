@@ -1,0 +1,12 @@
+label: Hello World
+
+inputs:
+  - name: name
+    label: Your Name
+    type: core/var
+    required: true
+
+tasks:
+  - label: Print Hello Message
+    type: io/print
+    text: "Hello ${name}!"

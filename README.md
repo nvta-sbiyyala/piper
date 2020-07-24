@@ -13,14 +13,7 @@ $ docker build -t piper .
 
 ## Hello World Example:
 
-Create an empty directory: 
-
-```
-mkdir pipelines
-cd pipelines
-```
-
-Create a simple pipeline file --  `hello.yaml` -- and paste the following to it: 
+Create a simple pipeline file --  `hello.yaml` (no-op, this is checked-in) -- and paste the following to it: 
 
 ```
 label: Hello World
