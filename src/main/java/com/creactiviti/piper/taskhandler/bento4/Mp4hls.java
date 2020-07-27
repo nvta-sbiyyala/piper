@@ -25,7 +25,7 @@ class Mp4hls implements TaskHandler<Object> {
   public Object handle (TaskExecution aTask) throws Exception {
     List<String> options = aTask.getList("options", String.class);
     CommandLine cmd = new CommandLine ("mp4hls");
-    options.forEach(o->cmd.addArgument(o));
+    options.forEach(cmd::addArgument);
     logger.debug("{}",cmd);
     DefaultExecutor exec = new DefaultExecutor();
     int exitValue = exec.execute(cmd);

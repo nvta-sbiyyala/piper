@@ -54,10 +54,7 @@ public class JdbcJobRepository implements JobRepository {
   @Override
   public Optional<Job> getLatest() {
     List<Job> query = jdbc.query("select * from job order by create_time desc limit 1", this::jobRowMappper);
-    if(query.size() == 0) {
-      return Optional.empty();
-    }
-    return Optional.of(query.get(0));
+    return query.stream().findFirst();
   }
   
   @Override
