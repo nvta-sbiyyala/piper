@@ -45,7 +45,7 @@ public class GitPipelineRepository extends YamlPipelineRepository  {
     synchronized(this) {
       List<IdentifiableResource> resources = git.getHeadFiles();
       List<Pipeline> pipelines = resources.stream()
-                                          .map(r -> parsePipeline(r))
+                                          .map(this::parsePipeline)
                                           .collect(Collectors.toList());
       return pipelines;
     }
